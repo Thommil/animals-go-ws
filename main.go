@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	fmt.Printf("%s %s\n", "Helslo", model.user.Get())
+	fmt.Printf("%s %s\n", "Helslo", user.Get())
 }
