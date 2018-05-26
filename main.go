@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/thommil/animals-go-common"
+	"github.com/thommil/animals-go-common/model"
 )
 
 func main() {
