@@ -11,8 +11,7 @@ import (
 // Configuration definition for animals-go-ws
 type Configuration struct {
 	Mongo struct {
-		Host string
-		Port int
+		Url string
 	}
 }
 
@@ -25,7 +24,7 @@ func LoadConfiguration() (Configuration, error) {
 	exPath := filepath.Dir(ex)
 
 	var filePath strings.Builder
-	fmt.Fprintf(&filePath, "%s/animals-go-ws.json", exPath)
+	fmt.Fprintf(&filePath, "%s/config/animals-go-ws.json", exPath)
 	configuration := Configuration{}
 	err = gonfig.GetConf(filePath.String(), &configuration)
 	return configuration, err
