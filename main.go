@@ -2,19 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/thommil/animals-go-ws/api"
+	"github.com/fvbock/endless"
+	"github.com/gin-gonic/gin"
+	"github.com/thommil/animals-go-ws/api/animals"
+	"github.com/thommil/animals-go-ws/api/users"
 	"github.com/thommil/animals-go-ws/config"
 	"log"
-	"net/http"
 	"strings"
-	"time"
 )
-
-//All Resources (in package api) must implement this interface to allow subrouting
-type Resource interface {
-	GetRoutes(router *mux.Router) error
-}
 
 // Main of animals-go-ws
 func main() {
@@ -26,25 +21,20 @@ func main() {
 	}
 
 	//HTTP Server
-	var serverAddress strings.Builder
-	fmt.Fprintf(&serverAddress, "%s:%d", config.Http.Host, config.Http.Port)
+	router := gin.Default()
 
-	router := mux.NewRouter()
-	server := &http.Server{
-		Addr:         serverAddress.String(),
-		Handler:      router,
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
-	}
+	//Routes for users
+	usersGroup := users.ApplyRoutes(router)
+
+	//Routes for animals
+	animalsGroup := animals.ApplyRoutes(router)
 
 	//Middlewares
+	fmt.Println(usersGroup, animalsGroup)
 
-	//users routes
-	if err = users.GetRoutes(router.PathPrefix("/users").Subrouter()); err != nil {
-		log.Fatal("Error applying users route", err)
-	}
-
-	//Start
+	//Start Server
+	var serverAddress strings.Builder
+	fmt.Fprintf(&serverAddress, "%s:%d", config.Http.Host, config.Http.Port)
 	log.Printf("Starting HTTP server on %s\n", serverAddress.String())
-	log.Fatal(server.ListenAndServe())
+	log.Fatal(endless.ListenAndServe(serverAddress.String(), router))
 }
