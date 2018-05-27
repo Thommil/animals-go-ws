@@ -10,6 +10,11 @@ import (
 
 // Configuration definition for animals-go-ws
 type Configuration struct {
+	Http struct {
+		Host string
+		Port int
+	}
+
 	Mongo struct {
 		Url string
 	}
