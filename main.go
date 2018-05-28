@@ -8,7 +8,7 @@ import (
 	"github.com/fvbock/endless"
 	"github.com/gin-gonic/gin"
 	"github.com/thommil/animals-go-common/config"
-	"github.com/thommil/animals-go-ws/api"
+	"github.com/thommil/animals-go-ws/resources"
 )
 
 // Configuration definition for animals-go-ws
@@ -27,21 +27,19 @@ type Configuration struct {
 func main() {
 	//Config
 	configuration := &Configuration{}
-	err := config.LoadConfiguration("animals-go-ws", configuration)
-
-	if err != nil {
+	if err := config.LoadConfiguration("animals-go-ws", configuration); err != nil {
 		log.Fatal(err)
 	}
 
 	//HTTP Server
 	router := gin.Default()
 
-	//users API
-	users := &api.Users{Engine: router}
+	//users
+	users := &resources.Users{Engine: router}
 	users.ApplyRoutes()
 
-	//animals API
-	animals := &api.Animals{Engine: router}
+	//animals
+	animals := &resources.Animals{Engine: router}
 	animals.ApplyRoutes()
 
 	//Middlewares
@@ -49,6 +47,5 @@ func main() {
 	//Start Server
 	var serverAddress strings.Builder
 	fmt.Fprintf(&serverAddress, "%s:%d", configuration.HTTP.Host, configuration.HTTP.Port)
-	log.Printf("Starting HTTP server on %s\n", serverAddress.String())
 	log.Fatal(endless.ListenAndServe(serverAddress.String(), router))
 }

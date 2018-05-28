@@ -1,13 +1,16 @@
-package api
+package resources
 
 import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/thommil/animals-go-common/api"
 )
 
-type Animals APIGroup
+// Animals Resource type
+type Animals api.Resource
 
+// ApplyRoutes implements IRoutable interface
 func (animals *Animals) ApplyRoutes() *Animals {
 	animals.Group = animals.Engine.Group("/animals")
 	{

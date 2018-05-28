@@ -1,13 +1,16 @@
-package api
+package resources
 
 import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/thommil/animals-go-common/api"
 )
 
-type Users APIGroup
+// Users Resource type
+type Users api.Resource
 
+// ApplyRoutes implements IRoutable interface
 func (users *Users) ApplyRoutes() *Users {
 	users.Group = users.Engine.Group("/users")
 	{
