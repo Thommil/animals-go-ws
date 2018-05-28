@@ -2,19 +2,32 @@ package main
 
 import (
 	"fmt"
-	"github.com/fvbock/endless"
-	"github.com/gin-gonic/gin"
-	"github.com/thommil/animals-go-ws/api/animals"
-	"github.com/thommil/animals-go-ws/api/users"
-	"github.com/thommil/animals-go-ws/config"
 	"log"
 	"strings"
+
+	"github.com/fvbock/endless"
+	"github.com/gin-gonic/gin"
+	"github.com/thommil/animals-go-common/config"
+	"github.com/thommil/animals-go-ws/api"
 )
+
+// Configuration definition for animals-go-ws
+type Configuration struct {
+	HTTP struct {
+		Host string
+		Port int
+	}
+
+	Mongo struct {
+		URL string
+	}
+}
 
 // Main of animals-go-ws
 func main() {
 	//Config
-	config, err := config.LoadConfiguration()
+	configuration := &Configuration{}
+	err := config.LoadConfiguration("animals-go-ws", configuration)
 
 	if err != nil {
 		log.Fatal(err)
@@ -23,18 +36,19 @@ func main() {
 	//HTTP Server
 	router := gin.Default()
 
-	//Routes for users
-	usersGroup := users.ApplyRoutes(router)
+	//users API
+	users := &api.Users{Engine: router}
+	users.ApplyRoutes()
 
-	//Routes for animals
-	animalsGroup := animals.ApplyRoutes(router)
+	//animals API
+	animals := &api.Animals{Engine: router}
+	animals.ApplyRoutes()
 
 	//Middlewares
-	fmt.Println(usersGroup, animalsGroup)
 
 	//Start Server
 	var serverAddress strings.Builder
-	fmt.Fprintf(&serverAddress, "%s:%d", config.Http.Host, config.Http.Port)
+	fmt.Fprintf(&serverAddress, "%s:%d", configuration.HTTP.Host, configuration.HTTP.Port)
 	log.Printf("Starting HTTP server on %s\n", serverAddress.String())
 	log.Fatal(endless.ListenAndServe(serverAddress.String(), router))
 }
