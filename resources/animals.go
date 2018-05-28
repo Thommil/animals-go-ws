@@ -12,11 +12,11 @@ type Animals api.Resource
 
 // ApplyRoutes implements IRoutable interface
 func (animals *Animals) ApplyRoutes() *Animals {
-	animals.Group = animals.Engine.Group("/animals")
+	group := animals.Engine.Group("/animals")
 	{
-		animals.Group.GET("", animals.findUser)
-		animals.Group.GET("/:id", animals.getUser)
-		animals.Group.DELETE("/:id", animals.deleteUser)
+		group.GET("", animals.findUser)
+		group.GET("/:id", animals.getUser)
+		group.DELETE("/:id", animals.deleteUser)
 	}
 	return animals
 }

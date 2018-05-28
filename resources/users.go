@@ -12,11 +12,11 @@ type Users api.Resource
 
 // ApplyRoutes implements IRoutable interface
 func (users *Users) ApplyRoutes() *Users {
-	users.Group = users.Engine.Group("/users")
+	group := users.Engine.Group("/users")
 	{
-		users.Group.GET("", users.findUser)
-		users.Group.GET("/:id", users.getUser)
-		users.Group.DELETE("/:id", users.deleteUser)
+		group.GET("", users.findUser)
+		group.GET("/:id", users.getUser)
+		group.DELETE("/:id", users.deleteUser)
 	}
 	return users
 }
