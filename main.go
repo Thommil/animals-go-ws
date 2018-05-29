@@ -8,7 +8,8 @@ import (
 	"github.com/fvbock/endless"
 	"github.com/gin-gonic/gin"
 	"github.com/thommil/animals-go-common/config"
-	"github.com/thommil/animals-go-ws/resources"
+	"github.com/thommil/animals-go-ws/resources/animals"
+	"github.com/thommil/animals-go-ws/resources/users"
 )
 
 // Configuration definition for animals-go-ws
@@ -34,15 +35,11 @@ func main() {
 	//HTTP Server
 	router := gin.Default()
 
-	//users
-	users := &resources.Users{Engine: router}
-	users.ApplyRoutes()
+	//Resources
+	users := users.New(router)
+	animals := animals.New(router)
 
-	//animals
-	animals := &resources.Animals{Engine: router}
-	animals.ApplyRoutes()
-
-	//Middlewares
+	fmt.Println(users, animals)
 
 	//Start Server
 	var serverAddress strings.Builder
