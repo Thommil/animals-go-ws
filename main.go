@@ -33,9 +33,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	//HTTP Server
-	router := gin.Default()
-
 	//Mongo
 	session, err := mgo.Dial(configuration.Mongo.URL)
 	if err != nil {
@@ -43,9 +40,12 @@ func main() {
 	}
 	defer session.Close()
 
+	//HTTP Server
+	router := gin.Default()
+
 	//Resources
-	users.New(router, session)
-	animals.New(router, session)
+	users.New(router, session.DB(""))
+	animals.New(router, session.DB(""))
 
 	//Start Server
 	var serverAddress strings.Builder

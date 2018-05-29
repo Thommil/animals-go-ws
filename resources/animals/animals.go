@@ -11,13 +11,13 @@ import (
 )
 
 type animals struct {
-	group      *gin.RouterGroup
-	collection *mgo.Collection
+	group    *gin.RouterGroup
+	database *mgo.Database
 }
 
 // New creates new Routable implementation for /animals resource
-func New(engine *gin.Engine, mongo *mgo.Session) resource.Routable {
-	animals := &animals{group: engine.Group("/animals"), collection: mongo.DB("").C("animal")}
+func New(engine *gin.Engine, database *mgo.Database) resource.Routable {
+	animals := &animals{group: engine.Group("/animals"), database: database}
 	{
 		animals.group.GET("", animals.findAnimals)
 		animals.group.GET("/:id", animals.getAnimals)
@@ -32,15 +32,22 @@ func (animals *animals) GetGroup() *gin.RouterGroup {
 }
 
 func (animals *animals) findAnimals(c *gin.Context) {
-	c.String(http.StatusOK, "FIND animals")
+	c.JSON(http.StatusNotImplemented, gin.H{
+		"code":    http.StatusNotImplemented,
+		"message": "Not implemented yet",
+	})
 }
 
 func (animals *animals) getAnimals(c *gin.Context) {
-	id := c.Param("id")
-	c.String(http.StatusOK, "GET %s", id)
+	c.JSON(http.StatusNotImplemented, gin.H{
+		"code":    http.StatusNotImplemented,
+		"message": "Not implemented yet",
+	})
 }
 
 func (animals *animals) deleteAnimals(c *gin.Context) {
-	id := c.Param("id")
-	c.String(http.StatusOK, "DELETE %s", id)
+	c.JSON(http.StatusNotImplemented, gin.H{
+		"code":    http.StatusNotImplemented,
+		"message": "Not implemented yet",
+	})
 }
