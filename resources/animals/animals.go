@@ -4,18 +4,20 @@ package animals
 import (
 	"net/http"
 
+	"github.com/globalsign/mgo"
 	"github.com/thommil/animals-go-common/api"
 
 	"github.com/gin-gonic/gin"
 )
 
 type animals struct {
-	group *gin.RouterGroup
+	group      *gin.RouterGroup
+	collection *mgo.Collection
 }
 
 // New creates new Routable implementation for /animals resource
-func New(engine *gin.Engine) resource.Routable {
-	animals := &animals{group: engine.Group("/animals")}
+func New(engine *gin.Engine, mongo *mgo.Session) resource.Routable {
+	animals := &animals{group: engine.Group("/animals"), collection: mongo.DB("").C("animal")}
 	{
 		animals.group.GET("", animals.findAnimals)
 		animals.group.GET("/:id", animals.getAnimals)

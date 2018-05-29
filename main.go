@@ -7,6 +7,7 @@ import (
 
 	"github.com/fvbock/endless"
 	"github.com/gin-gonic/gin"
+	"github.com/globalsign/mgo"
 	"github.com/thommil/animals-go-common/config"
 	"github.com/thommil/animals-go-ws/resources/animals"
 	"github.com/thommil/animals-go-ws/resources/users"
@@ -35,9 +36,16 @@ func main() {
 	//HTTP Server
 	router := gin.Default()
 
+	//Mongo
+	session, err := mgo.Dial(configuration.Mongo.URL)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer session.Close()
+
 	//Resources
-	users.New(router)
-	animals.New(router)
+	users.New(router, session)
+	animals.New(router, session)
 
 	//Start Server
 	var serverAddress strings.Builder
