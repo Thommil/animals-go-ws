@@ -36,10 +36,8 @@ func main() {
 	router := gin.Default()
 
 	//Resources
-	users := users.New(router)
-	animals := animals.New(router)
-
-	fmt.Println(users, animals)
+	users.New(router)
+	animals.New(router)
 
 	//Start Server
 	var serverAddress strings.Builder

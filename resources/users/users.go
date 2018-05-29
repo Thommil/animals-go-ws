@@ -1,3 +1,4 @@
+// Package users defines resources used for /users endpoint
 package users
 
 import (
@@ -12,7 +13,7 @@ type users struct {
 	group *gin.RouterGroup
 }
 
-// New create new users resource
+// New creates new Routable implementation for /users resource
 func New(engine *gin.Engine) resource.Routable {
 	users := &users{group: engine.Group("/users")}
 	{
@@ -23,7 +24,7 @@ func New(engine *gin.Engine) resource.Routable {
 	return users
 }
 
-// GetGroup implementation of Routable
+// GetGroup implementation of resource.Routable
 func (users *users) GetGroup() *gin.RouterGroup {
 	return users.group
 }

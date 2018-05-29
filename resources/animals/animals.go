@@ -1,3 +1,4 @@
+// Package animals defines resources used for /animals endpoint
 package animals
 
 import (
@@ -12,7 +13,7 @@ type animals struct {
 	group *gin.RouterGroup
 }
 
-// New create new animals resource
+// New creates new Routable implementation for /animals resource
 func New(engine *gin.Engine) resource.Routable {
 	animals := &animals{group: engine.Group("/animals")}
 	{
@@ -23,7 +24,7 @@ func New(engine *gin.Engine) resource.Routable {
 	return animals
 }
 
-// GetGroup implementation of Routable
+// GetGroup implementation of resource.Routable
 func (animals *animals) GetGroup() *gin.RouterGroup {
 	return animals.group
 }
