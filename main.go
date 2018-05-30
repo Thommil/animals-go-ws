@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/globalsign/mgo"
 	"github.com/thommil/animals-go-common/config"
+	"github.com/thommil/animals-go-ws/middlewares"
 	"github.com/thommil/animals-go-ws/resources/animals"
 	"github.com/thommil/animals-go-ws/resources/users"
 )
@@ -23,6 +24,8 @@ type Configuration struct {
 	Mongo struct {
 		URL string
 	}
+
+	Authentication middlewares.AuthenticationSettings
 }
 
 // Main of animals-go-ws
@@ -42,6 +45,9 @@ func main() {
 
 	//HTTP Server
 	router := gin.Default()
+
+	//Middlewares
+	router.Use(middlewares.Authenticated(&configuration.Authentication))
 
 	//Resources
 	users.New(router, session.DB(""))

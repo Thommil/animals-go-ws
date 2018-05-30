@@ -7,7 +7,6 @@ import (
 	"github.com/thommil/animals-go-common/model"
 
 	"github.com/globalsign/mgo"
-	"github.com/globalsign/mgo/bson"
 	"github.com/thommil/animals-go-common/api"
 
 	"github.com/gin-gonic/gin"
@@ -41,41 +40,35 @@ func (users *users) findUser(c *gin.Context) {
 	})
 }
 
-func (users *users) getUser(c *gin.Context) {
-	user := &model.User{}
-	id := c.Param("id")
-	if bson.IsObjectIdHex(id) {
-		if err := users.database.C("user").FindId(bson.ObjectIdHex(id)).One(user); err != nil {
-			c.JSON(http.StatusNotFound, gin.H{
-				"code":    http.StatusNotFound,
-				"message": err.Error(),
-			})
-		} else {
-			c.JSON(http.StatusOK, user)
-		}
+func (users *users) getMe(c *gin.Context) {
+	if user, ok := c.Get("user"); ok {
+		c.JSON(http.StatusOK, user)
 	} else {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"code":    http.StatusBadRequest,
-			"message": "Invalid user ID",
+		c.JSON(http.StatusNotFound, gin.H{
+			"code":    http.StatusNotFound,
+			"message": "Unable to recover session",
+		})
+	}
+}
+
+func (users *users) getUser(c *gin.Context) {
+	if user, err := model.FindUserByID(users.database, c.Param("id")); err == nil {
+		c.JSON(http.StatusOK, user)
+	} else {
+		c.JSON(http.StatusNotFound, gin.H{
+			"code":    http.StatusNotFound,
+			"message": err.Error(),
 		})
 	}
 }
 
 func (users *users) deleteUser(c *gin.Context) {
-	id := c.Param("id")
-	if bson.IsObjectIdHex(id) {
-		if err := users.database.C("user").RemoveId(bson.ObjectIdHex(id)); err != nil {
-			c.JSON(http.StatusNotFound, gin.H{
-				"code":    http.StatusNotFound,
-				"message": err.Error(),
-			})
-		} else {
-			c.Status(http.StatusOK)
-		}
+	if err := model.DeleteUserByID(users.database, c.Param("id")); err == nil {
+		c.Status(http.StatusOK)
 	} else {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"code":    http.StatusBadRequest,
-			"message": "Invalid user ID",
+		c.JSON(http.StatusNotFound, gin.H{
+			"code":    http.StatusNotFound,
+			"message": err.Error(),
 		})
 	}
 }
