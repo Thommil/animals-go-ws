@@ -36,10 +36,16 @@ func Authenticated(settings *AuthenticationSettings) gin.HandlerFunc {
 				c.Next()
 			} else {
 				// Try to get user from authentication service
-				if response, err := httpClient.Get(strings.Replace(settings.URL, ":tokenString", tokenString, 1)); err != nil {
+				response, err := httpClient.Get(strings.Replace(settings.URL, ":tokenString", tokenString, 1))
+				if err != nil {
 					c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 						"code":    http.StatusUnauthorized,
 						"message": err.Error(),
+					})
+				} else if response.StatusCode >= http.StatusBadRequest {
+					c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+						"code":    http.StatusUnauthorized,
+						"message": "Invalid or expired token",
 					})
 				} else {
 					defer response.Body.Close()
