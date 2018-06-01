@@ -7,9 +7,9 @@ import (
 
 	"github.com/fvbock/endless"
 	"github.com/gin-gonic/gin"
-	"github.com/globalsign/mgo"
 	"github.com/thommil/animals-go-common/config"
-	"github.com/thommil/animals-go-ws/middlewares"
+	"github.com/thommil/animals-go-common/dao/mongo"
+	"github.com/thommil/animals-go-ws/middlewares/authentication"
 	"github.com/thommil/animals-go-ws/resources/animals"
 	"github.com/thommil/animals-go-ws/resources/users"
 )
@@ -21,11 +21,9 @@ type Configuration struct {
 		Port int
 	}
 
-	Mongo struct {
-		URL string
-	}
+	Mongo mongo.Configuration
 
-	Authentication middlewares.AuthenticationSettings
+	Authentication authentication.Configuration
 }
 
 // Main of animals-go-ws
@@ -37,7 +35,7 @@ func main() {
 	}
 
 	//Mongo
-	session, err := mgo.Dial(configuration.Mongo.URL)
+	session, err := mongo.NewInstance(&configuration.Mongo)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -47,11 +45,11 @@ func main() {
 	router := gin.Default()
 
 	//Middlewares
-	router.Use(middlewares.Authenticated(&configuration.Authentication))
+	router.Use(authentication.Authenticated(&configuration.Authentication))
 
 	//Resources
-	users.New(router, session.DB(""))
-	animals.New(router, session.DB(""))
+	users.New(router)
+	animals.New(router)
 
 	//Start Server
 	var serverAddress strings.Builder

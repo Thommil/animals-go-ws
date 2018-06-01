@@ -1,4 +1,4 @@
-package middlewares
+package authentication
 
 import (
 	"encoding/json"
@@ -12,8 +12,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// AuthenticationSettings defines configuration of Authentication
-type AuthenticationSettings struct {
+// Configuration defines configuration of Authentication
+type Configuration struct {
 	// URL for authentication check when not found in cache
 	URL string
 	// Expired defines the delay in seconds before cache expiration
@@ -21,9 +21,9 @@ type AuthenticationSettings struct {
 }
 
 // Authenticated middleware check authentication
-func Authenticated(settings *AuthenticationSettings) gin.HandlerFunc {
+func Authenticated(configuration *Configuration) gin.HandlerFunc {
 	var httpClient = &http.Client{Timeout: 10 * time.Second}
-	var userCache = cache.New(settings.Expired*time.Second, settings.Expired*time.Second)
+	var userCache = cache.New(configuration.Expired*time.Second, configuration.Expired*time.Second)
 
 	return func(c *gin.Context) {
 		authorizationHeader := c.GetHeader("authorization")
@@ -36,7 +36,7 @@ func Authenticated(settings *AuthenticationSettings) gin.HandlerFunc {
 				c.Next()
 			} else {
 				// Try to get user from authentication service
-				response, err := httpClient.Get(strings.Replace(settings.URL, ":tokenString", tokenString, 1))
+				response, err := httpClient.Get(strings.Replace(configuration.URL, ":tokenString", tokenString, 1))
 				if err != nil {
 					c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 						"code":    http.StatusUnauthorized,
