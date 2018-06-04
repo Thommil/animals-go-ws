@@ -15,9 +15,9 @@ import (
 // Configuration defines configuration of Authentication
 type Configuration struct {
 	// URL for authentication check when not found in cache
-	URL string
+	URL string `json:"url"`
 	// Expired defines the delay in seconds before cache expiration
-	Expired time.Duration
+	Expired time.Duration `json:"expired"`
 }
 
 // Authenticated middleware check authentication
